@@ -677,9 +677,10 @@ async def read_item(item_id):
         changepercentage = (change/current_price) * 100
 
         x = [symbol, marketprice,positivenumber(round(sub,2)), positivenumber(round(changepercentage,2)), previousclose, marketopen,market_day_rangelow,market_day_rangehigh,volume,avg_volume,low,high]
-        #yahoostocks = {"data" : x}
-        json_object = json.dumps(x, indent = 4,cls=JSONEncoder) 
-        return {"data": json_object}
+        # yahoostocks = {"data" : x}
+        # json_object = json.dumps(x, indent = 4,cls=JSONEncoder) 
+        #return {"data": json_object}
+        return {"data": x}
 
     except:
         return '{"data" : []}'
