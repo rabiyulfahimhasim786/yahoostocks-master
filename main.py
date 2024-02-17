@@ -615,12 +615,19 @@ async def read_item(item_id):
     url = "https://query1.finance.yahoo.com/v8/finance/chart/"+item_id+"?region=US&lang=en-US&includePrePost=false&interval=2m&useYfid=true&range=1d&corsDomain=finance.yahoo.com&.tsrc=finance"
     for i in range(1,2):
         user_agent = random.choice(user_agentlist)
-    print(user_agent) 
+    # print(user_agent) 
 
     headers = {'User-Agent': user_agent}
     try:
-        data = requests.get("https://query1.finance.yahoo.com/v7/finance/options/"+item_id, headers=headers).json()
-        #calls = data["optionChain"]["result"][0]["options"][0]["calls"]
+        #backup 17-02-2024
+        # data = requests.get("https://query1.finance.yahoo.com/v7/finance/options/"+item_id, headers=headers).json()
+        credentials = getCredentials()
+        apiBase = 'https://query2.finance.yahoo.com'
+        url = apiBase + '/v7/finance/options/'+item_id+'?crumb='+credentials['crumb']
+        data = requests.get(url, cookies=credentials['cookie'], headers=headers)
+        data=data.json()
+        # print(data)
+       
         symbol = data["optionChain"]["result"][0]["underlyingSymbol"]
         marketprice = data["optionChain"]["result"][0]["quote"]["regularMarketPrice"]
         previousclose = data["optionChain"]["result"][0]["quote"]["regularMarketPreviousClose"]
@@ -653,7 +660,7 @@ async def read_item(item_id):
     url = "https://query1.finance.yahoo.com/v8/finance/chart/"+item_id+"?region=US&lang=en-US&includePrePost=false&interval=2m&useYfid=true&range=1d&corsDomain=finance.yahoo.com&.tsrc=finance"
     for i in range(1,2):
         user_agent = random.choice(user_agentlist)
-    print(user_agent) 
+    # print(user_agent) 
 
     headers = {'User-Agent': user_agent}
     try:
@@ -685,6 +692,24 @@ async def read_item(item_id):
     except:
         return '{"data" : []}'
 
+# apiBase = 'https://query2.finance.yahoo.com'
+# headers = { 
+#   "User-Agent": 
+#   "Mozilla/5.0 (Windows NT 6.1; Win64; x64)"
+# }
+
+def getCredentials():
+  apiBase = 'https://query2.finance.yahoo.com'
+  cookieUrl='https://fc.yahoo.com'
+  crumbUrl=apiBase+'/v1/test/getcrumb'
+  cookie = requests.get(cookieUrl).cookies
+  for i in range(1,2): 
+        user_agent = random.choice(user_agentlist)
+  # print(user_agent) 
+
+  headers = {'User-Agent': user_agent}
+  crumb = requests.get(url=crumbUrl, cookies=cookie, headers=headers).text
+  return {'cookie': cookie, 'crumb': crumb}
 
 
 @app.get("/ystocksdata/{item_id}")
@@ -692,11 +717,21 @@ async def read_item(item_id):
     url = "https://query1.finance.yahoo.com/v8/finance/chart/"+item_id+"?region=US&lang=en-US&includePrePost=false&interval=2m&useYfid=true&range=1d&corsDomain=finance.yahoo.com&.tsrc=finance"
     for i in range(1,2):
         user_agent = random.choice(user_agentlist)
-    print(user_agent) 
+    # print(user_agent) 
 
     headers = {'User-Agent': user_agent}
     try:
-        data = requests.get("https://query2.finance.yahoo.com/v7/finance/options/"+item_id, headers=headers).json()
+        credentials = getCredentials()
+        # url = apiBase + '/v7/finance/quote'
+        apiBase = 'https://query2.finance.yahoo.com'
+        url = apiBase + '/v7/finance/options/'+item_id+'?crumb='+credentials['crumb']
+        # params = {'symbols': (item_id), 'crumb': credentials['crumb']}
+        # params = {'crumb': credentials['crumb']}
+        # data = requests.get(url, params=params, cookies=credentials['cookie'], headers=headers)
+        data = requests.get(url, cookies=credentials['cookie'], headers=headers)
+        data=data.json()
+        # print(data)
+        # data = requests.get("https://query2.finance.yahoo.com/v7/finance/options/"+item_id, headers=headers).json()
         #calls = data["optionChain"]["result"][0]["options"][0]["calls"]
         symbol = data["optionChain"]["result"][0]["underlyingSymbol"]
         marketprice = data["optionChain"]["result"][0]["quote"]["regularMarketPrice"]
@@ -719,8 +754,64 @@ async def read_item(item_id):
         # yahoostocks = {"data" : x}
         # json_object = json.dumps(x, indent = 4,cls=JSONEncoder) 
         #return {"data": json_object}
+        # print(y)
         return {"data": y}
 
-    except:
+    # except:
+    except Exception as e:
+        error = f"error :{e}"
+        # print(error)
         return '{"data" : []}'
 
+
+@app.get("/jsonstocksdata/{item_id}")
+async def read_item(item_id):
+    url = "https://query1.finance.yahoo.com/v8/finance/chart/"+item_id+"?region=US&lang=en-US&includePrePost=false&interval=2m&useYfid=true&range=1d&corsDomain=finance.yahoo.com&.tsrc=finance"
+    for i in range(1,2):
+        user_agent = random.choice(user_agentlist)
+    # print(user_agent) 
+
+    headers = {'User-Agent': user_agent}
+    try:
+        credentials = getCredentials()
+        # url = apiBase + '/v7/finance/quote'
+        apiBase = 'https://query2.finance.yahoo.com'
+        url = apiBase + '/v7/finance/options/'+item_id+'?crumb='+credentials['crumb']
+        # params = {'symbols': (item_id), 'crumb': credentials['crumb']}
+        # params = {'crumb': credentials['crumb']}
+        # data = requests.get(url, params=params, cookies=credentials['cookie'], headers=headers)
+        data = requests.get(url, cookies=credentials['cookie'], headers=headers)
+        data=data.json()
+        # print(data)
+        # data = requests.get("https://query2.finance.yahoo.com/v7/finance/options/"+item_id, headers=headers).json()
+        #calls = data["optionChain"]["result"][0]["options"][0]["calls"]
+        symbol = data["optionChain"]["result"][0]["underlyingSymbol"]
+        marketprice = data["optionChain"]["result"][0]["quote"]["regularMarketPrice"]
+        previousclose = data["optionChain"]["result"][0]["quote"]["regularMarketPreviousClose"]
+        marketopen = data["optionChain"]["result"][0]["quote"]["regularMarketOpen"]
+        volume = data["optionChain"]["result"][0]["quote"]["regularMarketVolume"]
+        avg_volume = avg_volume = data["optionChain"]["result"][0]["quote"]["averageDailyVolume3Month"]
+        # market_day_range = data["optionChain"]["result"][0]["quote"]["regularMarketDayRange"]
+        market_day_rangelow = data["optionChain"]["result"][0]["quote"]["regularMarketDayLow"]
+        market_day_rangehigh = data["optionChain"]["result"][0]["quote"]["regularMarketDayHigh"]
+        high = data["optionChain"]["result"][0]["quote"]["fiftyTwoWeekHigh"]
+        low = data["optionChain"]["result"][0]["quote"]["fiftyTwoWeekLow"]
+
+        sub = Decimal(marketprice) - Decimal(previousclose)
+        change = round(sub,2)
+        current_price = Decimal(marketprice)
+        changepercentage = (change/current_price) * 100
+
+        # y = [symbol, marketprice,positivenumber(round(sub,2)), positivenumber(round(changepercentage,2)), previousclose, marketopen,market_day_rangelow,market_day_rangehigh,volume,avg_volume,low,high]
+        # yahoostocks = {"data" : x}
+        # json_object = json.dumps(x, indent = 4,cls=JSONEncoder) 
+        #return {"data": json_object}
+        y = {'symbol':symbol, 'marketprice': marketprice,'change': positivenumber(round(sub,2)), 'change%': positivenumber(round(changepercentage,2)),'previousclose' :previousclose,'marketopen': marketopen,'market_day_rangelow':market_day_rangelow,'market_day_rangehigh':market_day_rangehigh,'volume':volume,'averagevolume':avg_volume,'low':low,'high':high}
+        # print(y)
+        return {"data": y}
+
+    # except:
+    except Exception as e:
+        error = f"error :{e}"
+        # print(error)
+        return '{"data" : []}'
