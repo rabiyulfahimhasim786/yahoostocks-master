@@ -664,7 +664,7 @@ async def read_item(item_id):
 
     headers = {'User-Agent': user_agent}
     try:
-        data = requests.get("https://query1.finance.yahoo.com/v7/finance/options/"+item_id, headers=headers).json()
+        data = requests.get("https://query1.finance.yahoo.com/v6/finance/options/"+item_id, headers=headers).json()
         #calls = data["optionChain"]["result"][0]["options"][0]["calls"]
         symbol = data["optionChain"]["result"][0]["underlyingSymbol"]
         marketprice = data["optionChain"]["result"][0]["quote"]["regularMarketPrice"]
@@ -684,10 +684,10 @@ async def read_item(item_id):
         changepercentage = (change/current_price) * 100
 
         x = [symbol, marketprice,positivenumber(round(sub,2)), positivenumber(round(changepercentage,2)), previousclose, marketopen,market_day_rangelow,market_day_rangehigh,volume,avg_volume,low,high]
-        # yahoostocks = {"data" : x}
-        # json_object = json.dumps(x, indent = 4,cls=JSONEncoder) 
-        #return {"data": json_object}
-        return {"data": x}
+        yahoostocks = {"data" : x}
+        json_object = json.dumps(x, indent = 4,cls=JSONEncoder) 
+        return {"data": json_object}
+        # return {"data": x}
 
     except:
         return '{"data" : []}'
