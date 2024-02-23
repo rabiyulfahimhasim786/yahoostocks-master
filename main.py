@@ -610,7 +610,7 @@ async def read_item(item_id):
     
     return {"item_id": item_id, "Stocks-url": url}
 
-@app.get("/stocks/{item_id}")
+@app.get("/yahoostocks/{item_id}")
 async def read_item(item_id):
     url = "https://query1.finance.yahoo.com/v8/finance/chart/"+item_id+"?region=US&lang=en-US&includePrePost=false&interval=2m&useYfid=true&range=1d&corsDomain=finance.yahoo.com&.tsrc=finance"
     for i in range(1,2):
@@ -655,7 +655,7 @@ async def read_item(item_id):
 
 
 
-@app.get("/yahoostocks/{item_id}")
+@app.get("/stocks/{item_id}")
 async def read_item(item_id):
     url = "https://query1.finance.yahoo.com/v8/finance/chart/"+item_id+"?region=US&lang=en-US&includePrePost=false&interval=2m&useYfid=true&range=1d&corsDomain=finance.yahoo.com&.tsrc=finance"
     for i in range(1,2):
@@ -688,6 +688,13 @@ async def read_item(item_id):
         json_object = json.dumps(x, indent = 4,cls=JSONEncoder) 
         return {"data": json_object}
         # return {"data": x}
+    
+    except Exception as e:
+        error = f"error :{e}"
+        # print(error)
+        json_object = json.dumps(error, indent = 4,cls=JSONEncoder) 
+        # return '{"data" : []}'
+        return  {"data" : [],"error" : error}
 
     except:
         return '{"data" : []}'
